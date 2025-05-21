@@ -36,6 +36,69 @@ npm i
 npm run dev
 ```
 
+## Running the Full Application
+
+This project now features a Python-based backend for object detection, replacing the previous mock implementation. To run the full application, you'll need to start both the backend server and the frontend development server.
+
+**1. Backend Setup (Python/Flask)**
+
+The backend is a Flask application that serves the object detection API.
+
+*   **Navigate to the backend directory:**
+    ```sh
+    cd backend
+    ```
+
+*   **Create and activate a virtual environment:**
+    It's recommended to use a virtual environment to manage Python dependencies.
+    ```sh
+    # For macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
+    
+    # For Windows
+    python -m venv venv
+    venv\Scripts\activate
+    ```
+    You should see `(venv)` at the beginning of your command prompt.
+
+*   **Install dependencies:**
+    Install the required Python packages using the `requirements.txt` file.
+    ```sh
+    pip install -r requirements.txt
+    ```
+    This will install Flask, PyTorch, OpenCV, and other necessary libraries. *Note: PyTorch installation can sometimes be complex depending on your system and whether you have a CUDA-enabled GPU. The versions in `requirements.txt` are general; you might need to consult PyTorch's official website for specific installation commands if you encounter issues.*
+
+*   **Run the Flask application:**
+    Once dependencies are installed, start the Flask development server.
+    ```sh
+    python app.py
+    ```
+    By default, the backend will run on `http://localhost:5000`. You should see output indicating the server is running.
+
+**2. Frontend Setup (React/Vite)**
+
+The frontend is a React application built with Vite.
+
+*   **Navigate to the project root directory (if you were in `backend`):**
+    ```sh
+    cd .. 
+    ```
+
+*   **Install dependencies (if you haven't already):**
+    If this is your first time or if dependencies have changed:
+    ```sh
+    npm install
+    ```
+
+*   **Start the frontend development server:**
+    ```sh
+    npm run dev
+    ```
+    This will typically open the application in your browser, usually at `http://localhost:5173` (the port might vary). The frontend is configured to send API requests to the backend at `http://localhost:5000`.
+
+With both backend and frontend running, you can now use the object detection feature in the web application, which will call the live Python backend.
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
@@ -59,6 +122,9 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Python (for backend)
+- Flask (for backend API)
+- PyTorch/YOLOv5 (for object detection)
 
 ## How can I deploy this project?
 

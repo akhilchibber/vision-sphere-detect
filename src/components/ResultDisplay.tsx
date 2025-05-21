@@ -17,10 +17,11 @@ interface Detection {
 interface ResultDisplayProps {
   imageUrl: string;
   detections: Detection[];
+  objectCount?: number; // Add objectCount here
   onAnalyzeAnother: () => void;
 }
 
-const ResultDisplay = ({ imageUrl, detections, onAnalyzeAnother }: ResultDisplayProps) => {
+const ResultDisplay = ({ imageUrl, detections, objectCount, onAnalyzeAnother }: ResultDisplayProps) => {
   // Group detections by label
   const groupedDetections = detections.reduce((acc, detection) => {
     const { label } = detection;
@@ -31,8 +32,8 @@ const ResultDisplay = ({ imageUrl, detections, onAnalyzeAnother }: ResultDisplay
     return acc;
   }, {} as Record<string, Detection[]>);
   
-  // Count total objects
-  const totalObjects = detections.length;
+  // Use the passed objectCount or fallback to detections.length if not provided
+  const displayObjectCount = objectCount !== undefined ? objectCount : detections.length;
   
   // Mock function for download result
   const handleDownload = () => {
@@ -73,7 +74,7 @@ const ResultDisplay = ({ imageUrl, detections, onAnalyzeAnother }: ResultDisplay
           
           <div className="mb-4">
             <div className="text-sm font-medium text-muted-foreground mb-2">
-              Total Objects Detected: <span className="text-primary">{totalObjects}</span>
+              Total Objects Detected: <span className="text-primary">{displayObjectCount}</span>
             </div>
           </div>
           

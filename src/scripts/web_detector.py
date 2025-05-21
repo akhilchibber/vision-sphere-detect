@@ -118,7 +118,8 @@ def detect_objects_web(image_data, model_name=MODEL_NAME):
         # Return the results
         return {
             "imageUrl": f"data:image/jpeg;base64,{img_base64}",
-            "detections": detections
+            "detections": detections,
+            "object_count": len(detections)  # Add the count of detected objects
         }
         
     except Exception as e:

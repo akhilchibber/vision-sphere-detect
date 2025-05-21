@@ -1,6 +1,8 @@
 
 # Object Detection Scripts for Gravestein Vision
 
+**Important Note:** The primary, fully functional backend for this application is now located in the `backend/` directory (`backend/app.py`). The Flask example provided below is a minimalistic illustration of how `web_detector.py` can be used, but for running the complete application, please refer to the main project README and the `backend/` directory.
+
 This directory contains Python scripts for object detection using YOLOv5.
 
 ## Files:
@@ -19,15 +21,45 @@ pandas
 Pillow
 ```
 
-## Integration with the Web Application:
+## `web_detector.py` Details:
 
-The front-end application is already set up to make API calls for object detection. To connect it with these Python scripts, you need to create a simple backend that:
+The `detect_objects_web(image_data, model_name)` function in `web_detector.py` is designed to be called from a web API.
 
-1. Accepts image uploads from the front-end
-2. Calls the `detect_objects_web()` function from `web_detector.py`
-3. Returns the results to the front-end
+*   **Arguments:**
+    *   `image_data`: Raw image data (bytes) from an upload, or a file path.
+    *   `model_name` (optional): Name of the YOLOv5 model to use (e.g., `yolov5s`).
+*   **Returns:**
+    A dictionary with the following structure:
+    ```json
+    {
+      "imageUrl": "data:image/jpeg;base64,...", // Base64 encoded image with detections drawn
+      "detections": [
+        {
+          "label": "object_name", // e.g., "person", "car"
+          "confidence": 0.85,     // Detection confidence score
+          "box": {
+            "x": 100,
+            "y": 150,
+            "width": 50,
+            "height": 75
+          }
+        }
+        // ... more detections
+      ],
+      "object_count": 5 // Total number of objects detected
+    }
+    ```
+    If an error occurs, it returns `{"error": "Error message"}`.
 
-### Example Backend Setup (Python Flask):
+## Integration with a Web Application:
+
+To use these scripts in a web application, you need a backend that:
+
+1. Accepts image uploads.
+2. Calls the `detect_objects_web()` function from `web_detector.py`.
+3. Returns the JSON results to the frontend.
+
+### Minimalistic Flask Example:
 
 ```python
 from flask import Flask, request, jsonify
@@ -39,12 +71,13 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts'))
 
 # Import the web detector function
-from web_detector import detect_objects_web
+# Ensure web_detector.py is in the same directory or accessible via sys.path
+from web_detector import detect_objects_web 
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-@app.route('/api/detect', methods=['POST'])
+@app.route('/minimal_api/detect', methods=['POST']) # Renamed endpoint for clarity
 def detect():
     if 'image' not in request.files:
         return jsonify({"error": "No image file provided"}), 400
@@ -68,8 +101,4 @@ if __name__ == '__main__':
 
 ## Note:
 
-The current front-end is using a mock API that simulates object detection. To use the actual Python-based detection, you'll need to:
-
-1. Set up the backend server with Flask or another Python web framework
-2. Update the front-end API calls to point to your backend server
-3. Ensure all Python dependencies are installed on the server
+As mentioned, the main application backend is in `backend/app.py`. That backend is already configured to work with the frontend. The example above is for understanding how `web_detector.py` can be used independently or for testing purposes.

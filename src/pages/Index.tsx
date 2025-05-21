@@ -7,41 +7,6 @@ import ProcessingLoader from '@/components/ProcessingLoader';
 import ResultDisplay from '@/components/ResultDisplay';
 import { Button } from '@/components/ui/button';
 
-// Mock API - In a real application, this would be replaced with actual API calls
-const mockDetectObjects = async (file: File): Promise<{
-  imageUrl: string;
-  detections: { 
-    label: string;
-    confidence: number;
-    box: { x: number; y: number; width: number; height: number; }
-  }[];
-}> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Return mock data
-  return {
-    imageUrl: URL.createObjectURL(file),
-    detections: [
-      { 
-        label: 'Person',
-        confidence: 0.92,
-        box: { x: 50, y: 50, width: 200, height: 350 }
-      },
-      { 
-        label: 'Dog',
-        confidence: 0.85,
-        box: { x: 300, y: 200, width: 150, height: 100 }
-      },
-      { 
-        label: 'Car',
-        confidence: 0.95,
-        box: { x: 450, y: 100, width: 250, height: 150 }
-      }
-    ]
-  };
-};
-
 // Application states
 enum AppState {
   INITIAL,
@@ -57,6 +22,7 @@ const Index = () => {
   const [results, setResults] = useState<{
     imageUrl: string;
     detections: any[];
+    object_count?: number; // Added object_count here
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -76,20 +42,40 @@ const Index = () => {
     
     try {
       setAppState(AppState.PROCESSING);
-      
-      // Call the API (mock in this case)
-      const result = await mockDetectObjects(selectedImage);
-      
-      setResults(result);
-      setAppState(AppState.RESULTS);
-    } catch (err) {
-      setError("Failed to process the image. Please try again or use a different image.");
-      setAppState(AppState.ERROR);
-      toast({
-        title: "Error processing image",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive"
-      });
+      setError(null); // Clear previous errors
+
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+
+      try {
+        const response = await fetch('http://localhost:5000/api/detect', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Unknown error occurred" }));
+          throw new Error(errorData.message || `Server responded with ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        setResults(result);
+        setAppState(AppState.RESULTS);
+      } catch (err: any) {
+        const errorMessage = err.message || "Failed to process the image. Please try again or use a different image.";
+        setError(errorMessage);
+        setAppState(AppState.ERROR);
+        toast({
+          title: "Error processing image",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -112,6 +98,7 @@ const Index = () => {
             <ResultDisplay 
               imageUrl={results.imageUrl}
               detections={results.detections}
+              objectCount={results.object_count} // Pass object_count
               onAnalyzeAnother={handleAnalyzeAnother}
             />
           ) : (
