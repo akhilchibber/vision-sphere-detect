@@ -66,17 +66,19 @@ After cloning the repository, install the JavaScript and Python dependencies and
 start both the frontend and backend servers:
 
 ```bash
-# Install Node dependencies
-npm install
+# Step 1: Clone the repository
+git clone https://github.com/akhilchibber/vision-sphere-detect.git
+cd vision-sphere-detect
 
-# Install Python packages for the detection backend
+# Step 2: Set up the Python backend
+python -m venv venv
+source venv/bin/activate
 pip install -r backend/requirements.txt
+python backend/app.py  # Starts Flask server on http://localhost:8000
 
-# In one terminal start the backend
-python backend/app.py
-
-# In another terminal start the React dev server
-npm run dev
+# Step 3: Set up the frontend
+npm install
+npm run dev  # Starts Vite dev server on http://localhost:5173
 ```
 
 Open <http://localhost:8080> in your browser and upload an image to see detected
