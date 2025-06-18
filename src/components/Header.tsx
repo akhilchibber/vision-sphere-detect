@@ -8,7 +8,7 @@ const Header = () => {
       <div className="bg-accent/10 p-2 rounded-full">
         <Aperture className="w-8 h-8 text-accent" />
       </div>
-      <h1 className="text-2xl font-semibold text-primary">Gravestein Vision</h1>
+      <h1 className="text-2xl font-semibold text-primary">AkhilVision</h1>
     </header>
   );
 };

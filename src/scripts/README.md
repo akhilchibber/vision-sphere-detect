@@ -1,5 +1,5 @@
 
-# Object Detection Scripts for Gravestein Vision
+# Object Detection Scripts for AkhilVision
 
 This directory contains Python scripts for object detection using YOLOv5.
 
