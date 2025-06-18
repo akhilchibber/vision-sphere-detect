@@ -7,39 +7,30 @@ import ProcessingLoader from '@/components/ProcessingLoader';
 import ResultDisplay from '@/components/ResultDisplay';
 import { Button } from '@/components/ui/button';
 
-// Mock API - In a real application, this would be replaced with actual API calls
-const mockDetectObjects = async (file: File): Promise<{
+const API_BASE_URL = 'http://localhost:8000';
+
+// Call the backend API to detect objects
+const detectObjects = async (file: File): Promise<{
   imageUrl: string;
-  detections: { 
+  detections: {
     label: string;
     confidence: number;
     box: { x: number; y: number; width: number; height: number; }
   }[];
 }> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Return mock data
-  return {
-    imageUrl: URL.createObjectURL(file),
-    detections: [
-      { 
-        label: 'Person',
-        confidence: 0.92,
-        box: { x: 50, y: 50, width: 200, height: 350 }
-      },
-      { 
-        label: 'Dog',
-        confidence: 0.85,
-        box: { x: 300, y: 200, width: 150, height: 100 }
-      },
-      { 
-        label: 'Car',
-        confidence: 0.95,
-        box: { x: 450, y: 100, width: 250, height: 150 }
-      }
-    ]
-  };
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/detect`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to detect objects');
+  }
+
+  return response.json();
 };
 
 // Application states
@@ -77,8 +68,8 @@ const Index = () => {
     try {
       setAppState(AppState.PROCESSING);
       
-      // Call the API (mock in this case)
-      const result = await mockDetectObjects(selectedImage);
+      // Call the backend API
+      const result = await detectObjects(selectedImage);
       
       setResults(result);
       setAppState(AppState.RESULTS);

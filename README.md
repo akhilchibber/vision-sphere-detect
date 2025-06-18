@@ -60,6 +60,28 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Running locally with object detection
+
+After cloning the repository, install the JavaScript and Python dependencies and
+start both the frontend and backend servers:
+
+```bash
+# Install Node dependencies
+npm install
+
+# Install Python packages for the detection backend
+pip install -r backend/requirements.txt
+
+# In one terminal start the backend
+python backend/app.py
+
+# In another terminal start the React dev server
+npm run dev
+```
+
+Open <http://localhost:8080> in your browser and upload an image to see detected
+objects.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/e6b41c86-cf25-4fcc-9847-c66bf614c1a6) and click on Share -> Publish.
